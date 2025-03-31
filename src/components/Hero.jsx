@@ -7,6 +7,7 @@ import SplitType from "split-type";
 
 import Button from "./Button";
 import VideoPreview from "./VideoPreview";
+import ScrollIndicator from "../components/ScrollIndicator";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -209,12 +210,16 @@ const Hero = () => {
               Crafting Digital Experiences <br /> From Frontend to Backend
             </p>
 
-            <Button
-              id="watch-trailer"
-              title="View Projects"
-              leftIcon={<TiLocationArrow />}
-              containerClass="bg-yellow-300 flex-center gap-1"
-            />
+            <div className="relative flex justify-center mt-48">
+              <div className="opacity-0 transition-opacity duration-700 ease-in-out hover:opacity-100">
+                <ScrollIndicator
+                  onClick={() => {
+                    const storySection = document.querySelector("#about");
+                    storySection?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { TiLocationArrow } from "react-icons/ti";
 import AnimatedTitle from "./AnimatedTitle";
 import Button from "./Button";
 import SplitType from "split-type";
+import ScrollIndicator from "./ScrollIndicator";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -90,7 +91,7 @@ const ServiceCard = ({ service, index }) => {
   // GSAP animation for image transition
   useEffect(() => {
     gsap.to(imageRef.current, {
-      opacity: 0,
+      opacity: 1,
       duration: 0.3,
       onComplete: () => {
         gsap.to(imageRef.current, {
@@ -166,7 +167,7 @@ const ServiceCard = ({ service, index }) => {
     >
       {/* Image Section with Carousel */}
       <div className="relative w-full overflow-hidden lg:w-1/2">
-        <div className="relative h-[300px] w-full overflow-hidden rounded-2xl sm:h-[400px] lg:h-[600px]">
+        <div className="relative h-[300px] w-full overflow-hidden rounded-2xl sm:h-[200px] lg:h-[350px]">
           <img
             ref={imageRef}
             src={service.images[currentImageIndex]}
@@ -223,10 +224,10 @@ const ServiceCard = ({ service, index }) => {
       <div className="flex w-full flex-col justify-center px-2 sm:px-4 lg:w-1/2 lg:px-0">
         <div className="relative">
           {/* Icon */}
-          <div className="card-icon mb-4 inline-block sm:mb-6 lg:mb-8">
-            <div className="relative rounded-xl border-2 border-violet-300/20 bg-white/80 p-4 backdrop-blur-sm sm:rounded-2xl sm:p-5 lg:p-6">
+          <div className="card-icon mb-4 inline-block sm:mb-6 lg:mb-1">
+            <div className="relative rounded-xl border-2 border-violet-300/20 bg-white/80 p-4 backdrop-blur-sm sm:rounded-2xl sm:p-5 lg:p-3">
               <div
-                className={`text-3xl sm:text-4xl lg:text-5xl ${service.iconColor}`}
+                className={`text-3xl sm:text-4xl lg:text-2xl ${service.iconColor}`}
               >
                 {service.icon}
               </div>

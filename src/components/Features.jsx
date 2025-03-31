@@ -1,5 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { TiLocationArrow } from "react-icons/ti";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ScrollIndicator from "./ScrollIndicator";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const BentoTilt = ({ children, className = "" }) => {
   const [transformStyle, setTransformStyle] = useState("");
@@ -38,9 +44,19 @@ export const BentoTilt = ({ children, className = "" }) => {
   );
 };
 
-export const BentoCard = ({ src, title, description, isComingSoon }) => {
+export const BentoCard = ({
+  src,
+  title,
+  description,
+  technologies = [],
+  githubLink,
+  liveLink,
+  isComingSoon,
+}) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [hoverOpacity, setHoverOpacity] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef(null);
   const hoverButtonRef = useRef(null);
 
   const handleMouseMove = (event) => {
@@ -56,20 +72,83 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
   const handleMouseEnter = () => setHoverOpacity(1);
   const handleMouseLeave = () => setHoverOpacity(0);
 
+  useEffect(() => {
+    gsap.from(cardRef.current, {
+      opacity: 1,
+      y: 50,
+      duration: 1,
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: "top bottom",
+        end: "top center",
+        scrub: 1,
+      },
+    });
+  }, []);
+
   return (
-    <div className="relative size-full">
+    <div
+      id="features"
+      ref={cardRef}
+      className="relative size-full group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <video
         src={src}
         loop
         muted
         autoPlay
-        className="absolute left-0 top-0 size-full object-cover object-center"
+        playsInline // Add this for better mobile support
+        className={`absolute left-0 top-0 size-full object-cover object-center transition-all duration-500 ${
+          isHovered ? "scale-110 blur-sm" : ""
+        }`}
       />
-      <div className="relative z-10 flex size-full flex-col justify-between p-5 text-blue-50">
+      <div className="relative z-10 flex size-full flex-col justify-between p-3 sm:p-4 md:p-5 text-blue-50 bg-gradient-to-t from-black/80 to-transparent">
         <div>
-          <h1 className="bento-title special-font">{title}</h1>
+          <h1 className="bento-title special-font text-lg sm:text-xl md:text-2xl">
+            {title}
+          </h1>
           {description && (
-            <p className="mt-3 max-w-64 text-xs md:text-base">{description}</p>
+            <p className="mt-2 sm:mt-3 max-w-64 text-xs sm:text-sm md:text-base">
+              {description}
+            </p>
+          )}
+
+          {technologies.length > 0 && (
+            <div className="mt-2 sm:mt-4 flex flex-wrap gap-1 sm:gap-2">
+              {technologies.map((tech, index) => (
+                <span
+                  key={index}
+                  className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs bg-blue-500/20 rounded-full backdrop-blur-sm"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3 sm:gap-4 mt-3 sm:mt-4">
+          {githubLink && (
+            <a
+              href={githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-50 hover:text-blue-300 transition-colors"
+            >
+              <FaGithub className="w-4 h-4 sm:w-5 sm:h-5" />
+            </a>
+          )}
+          {liveLink && (
+            <a
+              href={liveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-50 hover:text-blue-300 transition-colors"
+            >
+              <FaExternalLinkAlt className="w-4 h-4 sm:w-5 sm:h-5" />
+            </a>
           )}
         </div>
 
@@ -79,9 +158,8 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
             onMouseMove={handleMouseMove}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="border-hsla relative flex w-fit cursor-pointer items-center gap-1 overflow-hidden rounded-full bg-black px-5 py-2 text-xs uppercase text-white/20"
+            className="border-hsla relative flex w-fit cursor-pointer items-center gap-1 overflow-hidden rounded-full bg-black px-3 sm:px-5 py-1.5 sm:py-2 text-[10px] sm:text-xs uppercase text-white/20"
           >
-            {/* Radial gradient hover effect */}
             <div
               className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
               style={{
@@ -89,7 +167,7 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
                 background: `radial-gradient(100px circle at ${cursorPosition.x}px ${cursorPosition.y}px, #656fe288, #00000026)`,
               }}
             />
-            <TiLocationArrow className="relative z-20" />
+            <TiLocationArrow className="relative z-20 w-3 h-3 sm:w-4 sm:h-4" />
             <p className="relative z-20">coming soon</p>
           </div>
         )}
@@ -98,95 +176,143 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
   );
 };
 
-const Features = () => (
-  <section className="bg-black pb-52">
-    <div className="container mx-auto px-3 md:px-10">
-      <div className="px-5 py-32">
-        <p className="font-circular-web text-lg text-blue-50">
-          Into the Metagame Layer
-        </p>
-        <p className="max-w-md font-circular-web text-lg text-blue-50 opacity-50">
-          Immerse yourself in a rich and ever-expanding universe where a vibrant
-          array of products converge into an interconnected overlay experience
-          on your world.
-        </p>
-      </div>
+const Features = () => {
+  const headerRef = useRef(null);
 
-      <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
-        <BentoCard
-          src="videos/feature-1.mp4"
-          title={
-            <>
-              radia<b>n</b>t
-            </>
-          }
-          description="A cross-platform metagame app, turning your activities across Web2 and Web3 games into a rewarding adventure."
-          isComingSoon
-        />
-      </BentoTilt>
+  useEffect(() => {
+    gsap.from(headerRef.current.children, {
+      y: 100,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.2,
+      ease: "power4.inOut",
+      scrollTrigger: {
+        trigger: headerRef.current,
+        start: "top center+=100",
+        end: "bottom center",
+        toggleActions: "play none none ",
+      },
+    });
+  }, []);
 
-      <div className="grid h-[135vh] w-full grid-cols-2 grid-rows-3 gap-7">
-        <BentoTilt className="bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2">
-          <BentoCard
-            src="videos/feature-2.mp4"
-            title={
-              <>
-                zig<b>m</b>a
-              </>
-            }
-            description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
-            isComingSoon
-          />
-        </BentoTilt>
-
-        <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
-          <BentoCard
-            src="videos/feature-3.mp4"
-            title={
-              <>
-                n<b>e</b>xus
-              </>
-            }
-            description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
-            isComingSoon
-          />
-        </BentoTilt>
-
-        <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
-          <BentoCard
-            src="videos/feature-4.mp4"
-            title={
-              <>
-                az<b>u</b>l
-              </>
-            }
-            description="A cross-world AI Agent - elevating your gameplay to be more fun and productive."
-            isComingSoon
-          />
-        </BentoTilt>
-
-        <BentoTilt className="bento-tilt_2">
-          <div className="flex size-full flex-col justify-between bg-violet-300 p-5">
-            <h1 className="bento-title special-font max-w-64 text-black">
-              M<b>o</b>re co<b>m</b>ing s<b>o</b>on.
-            </h1>
-
-            <TiLocationArrow className="m-5 scale-[5] self-end" />
+  return (
+    <section className="bg-black pb-52">
+      <div className="container mx-auto px-3 md:px-10">
+        <div
+          ref={headerRef}
+          className="px-5 py-32 max-w-2xl"
+        >
+          <div className="mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-zentry font-black text-blue-50 special-font">
+              Featured <b>Projects</b>
+            </h2>
+            <div className="h-1 w-32 bg-violet-300 rounded-full mt-4"></div>
           </div>
-        </BentoTilt>
 
-        <BentoTilt className="bento-tilt_2">
-          <video
-            src="videos/feature-5.mp4"
-            loop
-            muted
-            autoPlay
-            className="size-full object-cover object-center"
+          <p className="font-circular-web text-base sm:text-lg md:text-xl text-blue-50/70 leading-relaxed">
+            A showcase of my recent work, featuring full-stack applications,
+            interactive experiences, and innovative solutions.
+          </p>
+        </div>
+
+        <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
+          <BentoCard
+            src="videos/feature-1.mp4"
+            title={
+              <>
+                Project <b>One</b>
+              </>
+            }
+            description="A full-stack e-commerce platform built with Next.js, featuring real-time updates and seamless payment integration."
+            technologies={["Next.js", "Node.js", "MongoDB", "Stripe"]}
+            githubLink="https://github.com/yourusername/project-one"
+            liveLink="https://project-one.com"
           />
         </BentoTilt>
+
+        <div className="grid h-[135vh] w-full grid-cols-2 grid-rows-3 gap-7">
+          <BentoTilt className="bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2">
+            <BentoCard
+              src="videos/feature-2.mp4"
+              title={
+                <>
+                  AI <b>Assistant</b>
+                </>
+              }
+              description="An AI-powered coding assistant that helps developers write better code faster."
+              technologies={["Python", "OpenAI", "React", "FastAPI"]}
+              githubLink="https://github.com/yourusername/ai-assistant"
+              liveLink="https://ai-assistant.com"
+            />
+          </BentoTilt>
+
+          <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
+            <BentoCard
+              src="videos/feature-3.mp4"
+              title={
+                <>
+                  Social <b>Hub</b>
+                </>
+              }
+              description="A real-time social platform for developers to collaborate and share ideas."
+              technologies={["React", "Firebase", "WebSocket", "Tailwind"]}
+              githubLink="https://github.com/yourusername/social-hub"
+              isComingSoon
+            />
+          </BentoTilt>
+
+          <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
+            <BentoCard
+              src="videos/feature-4.mp4"
+              title={
+                <>
+                  Data <b>Viz</b>
+                </>
+              }
+              description="Interactive data visualization dashboard for complex datasets."
+              technologies={["D3.js", "Vue.js", "Express", "PostgreSQL"]}
+              githubLink="https://github.com/yourusername/data-viz"
+              liveLink="https://data-viz.com"
+            />
+          </BentoTilt>
+
+          <BentoTilt className="bento-tilt_2">
+            <div className="flex size-full flex-col justify-between bg-gradient-to-br from-violet-400 to-violet-600 p-5">
+              <h1 className="bento-title special-font max-w-64 text-white">
+                View <b>More</b> on <b>GitHub</b>
+              </h1>
+              <a
+                href="https://github.com/yourusername"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="self-end hover:scale-110 transition-transform"
+              >
+                <FaGithub className="m-5 scale-[3] text-white" />
+              </a>
+            </div>
+          </BentoTilt>
+
+          <BentoTilt className="bento-tilt_2">
+            <video
+              src="videos/feature-5.mp4"
+              loop
+              muted
+              autoPlay
+              className="size-full object-cover object-center"
+            />
+          </BentoTilt>
+        </div>
       </div>
-    </div>
-  </section>
-);
+      <div className="relative flex justify-center mt-20">
+        <ScrollIndicator
+          onClick={() => {
+            const storySection = document.querySelector("#story");
+            storySection?.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
+      </div>
+    </section>
+  );
+};
 
 export default Features;
