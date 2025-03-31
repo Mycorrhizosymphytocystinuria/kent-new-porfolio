@@ -1,0 +1,13 @@
+.service-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.service-icon {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+}
+
+.parallax-bg {
+  background-size: 200% 200%;
+  background-position: 0 0;
+}
