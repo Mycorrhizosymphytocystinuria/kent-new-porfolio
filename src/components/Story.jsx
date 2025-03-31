@@ -3,6 +3,7 @@ import { useRef } from "react";
 
 import Button from "./Button";
 import AnimatedTitle from "./AnimatedTitle";
+import ScrollIndicator from "./ScrollIndicator";
 
 const FloatingImage = () => {
   const frameRef = useRef(null);
@@ -46,7 +47,7 @@ const FloatingImage = () => {
   };
 
   return (
-    <div
+    <section
       id="story"
       className="min-h-dvh w-screen bg-black text-blue-50"
     >
@@ -122,7 +123,15 @@ const FloatingImage = () => {
           </div>
         </div>
       </div>
-    </div>
+      <div className="relative flex justify-center mt-20">
+        <ScrollIndicator
+          onClick={() => {
+            const contactSection = document.querySelector("#contact");
+            contactSection?.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
+      </div>
+    </section>
   );
 };
 

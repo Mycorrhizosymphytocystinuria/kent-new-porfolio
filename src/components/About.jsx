@@ -20,9 +20,7 @@ const services = [
     bgColor: "from-blue-400/20 to-purple-400/20",
     iconColor: "text-blue-600",
     images: [
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=60",
+      "https://cdn.dribbble.com/userupload/18243759/file/original-59370a3ab6d5515b5aa8531af68e7392.png?resize=2048x1536&vertical=center",
     ],
     imagePosition: "left",
   },
@@ -34,12 +32,11 @@ const services = [
     bgColor: "from-purple-400/20 to-pink-400/20",
     iconColor: "text-purple-600",
     images: [
-      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1622542796254-5b9c46a259b8?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&auto=format&fit=crop&q=60",
+      "https://elements-resized.envatousercontent.com/elements-cover-images/94fef660-6fd4-4774-b52d-9df5045730a2?w=2038&cf_fit=scale-down&q=85&format=auto&s=98a6b02a94a2d2b4e244d5d6357fce14eb6bf0dce8a92ccf54528583e18f9a59",
     ],
     imagePosition: "right",
   },
+
   {
     icon: <FiSmartphone />,
     title: "Mobile Apps",
@@ -48,8 +45,7 @@ const services = [
     bgColor: "from-pink-400/20 to-red-400/20",
     iconColor: "text-pink-600",
     images: [
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1601972599720-36938d4ecd31?w=800&auto=format&fit=crop&q=60",
+      "http://elements-resized.envatousercontent.com/elements-cover-images/606b5511-4947-4d99-af4e-f4e11ea77464?w=2038&cf_fit=scale-down&q=85&format=auto&s=ce8a843293abd72cccd164a9298e1c6daf05ef76608dad9ae2127517061f3efb",
       "https://images.unsplash.com/photo-1526045431048-f857369baa09?w=800&auto=format&fit=crop&q=60",
     ],
     imagePosition: "left",
@@ -62,9 +58,7 @@ const services = [
     bgColor: "from-red-400/20 to-orange-400/20",
     iconColor: "text-red-600",
     images: [
-      "https://images.unsplash.com/photo-1623479322729-28b25c16b011?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1603322199363-14380ec2ba31?w=800&auto=format&fit=crop&q=60",
+      "https://cdn.dribbble.com/userupload/17738653/file/original-0c4f47eb1798e18b1f3463631bea62ae.jpg?resize=1592x1194&vertical=center",
     ],
     imagePosition: "right",
   },
@@ -76,6 +70,7 @@ const ServiceCard = ({ service, index }) => {
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
   const imageRef = useRef(null);
+  const parallaxRef = useRef(null);
 
   // Auto-advance carousel
   useEffect(() => {
@@ -119,7 +114,7 @@ const ServiceCard = ({ service, index }) => {
     });
 
     tl.from(cardRef.current, {
-      opacity: 0,
+      opacity: 1,
       y: 100,
       duration: 1,
       ease: "power3.out",
@@ -148,19 +143,42 @@ const ServiceCard = ({ service, index }) => {
         "-=0.3"
       );
 
+    // Add parallax effect to the card
+    gsap.to(parallaxRef.current, {
+      yPercent: -20,
+      ease: "none",
+      scrollTrigger: {
+        trigger: parallaxRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1.5,
+      },
+    });
+
+    // Enhanced card entrance animation
+    gsap.from(cardRef.current, {
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: "top bottom",
+        end: "top center",
+        scrub: 1,
+      },
+      y: 100,
+      opacity: 0,
+      duration: 1,
+    });
+
     return () => {
       titleText.revert();
       descriptionText.revert();
     };
   }, []);
 
-  const handleDotClick = (index) => {
-    setCurrentImageIndex(index);
-  };
+  const handleDotClick = (index) => {};
 
   return (
     <div
-      ref={cardRef}
+      ref={parallaxRef}
       className={`group relative my-16 flex flex-col items-center gap-6 overflow-hidden md:my-24 lg:my-48 lg:flex-row lg:items-stretch lg:gap-16 ${
         service.imagePosition === "right" ? "lg:flex-row-reverse" : ""
       }`}
@@ -263,12 +281,64 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const About = () => {
+  const backgroundRef = useRef(null);
+  const contentRef = useRef(null);
+
+  useGSAP(() => {
+    // Parallax background effect
+    gsap.to(backgroundRef.current, {
+      yPercent: -30,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#about",
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+      },
+    });
+
+    // Content parallax effect
+    gsap.to(contentRef.current, {
+      yPercent: -10,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#about",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1,
+      },
+    });
+  }, []);
+
   return (
     <section
       id="about"
       className="relative w-full overflow-hidden bg-blue-50 py-16 sm:py-24 lg:py-32"
     >
-      <div className="container mx-auto px-4">
+      {/* Parallax Background */}
+      <div
+        ref={backgroundRef}
+        className="absolute inset-0 -z-10"
+      >
+        {/* Add background image */}
+        <img
+          src="/img/gallery-3.webp"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-10"
+        />
+
+        {/* Decorative circles */}
+        <div className="absolute -left-1/4 top-1/4 h-96 w-96 rounded-full bg-violet-300/10 blur-3xl" />
+        <div className="absolute -right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-blue-300/10 blur-3xl" />
+
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:14px_24px]" />
+      </div>
+
+      <div
+        ref={contentRef}
+        className="container mx-auto px-4"
+      >
         {/* Header Section */}
         <div className="mb-16 text-center sm:mb-20 lg:mb-24">
           <p className="mb-3 font-general text-xs uppercase tracking-[0.2em] text-violet-300 sm:mb-4 sm:text-sm sm:tracking-[0.3em]">

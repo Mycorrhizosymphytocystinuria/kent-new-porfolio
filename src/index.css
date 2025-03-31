@@ -305,3 +305,69 @@ body {
 .explode-text:hover {
   opacity: 0.8;
 }
+
+@keyframes bounce3d {
+  0%,
+  100% {
+    transform: translateY(0) rotate3d(1, 1, 0, 0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate3d(1, 1, 0, 15deg);
+  }
+}
+
+@keyframes tilt {
+  0%,
+  100% {
+    transform: rotate3d(1, 1, 1, 0deg);
+  }
+  25% {
+    transform: rotate3d(1, 1, 1, 10deg);
+  }
+  75% {
+    transform: rotate3d(1, 1, 1, -10deg);
+  }
+}
+
+.animate-bounce3d {
+  animation: bounce3d 2s infinite;
+}
+
+.animate-tilt {
+  animation: tilt 3s infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.delay-75 {
+  animation-delay: 75ms;
+}
+
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+@keyframes arrowPulse {
+  0% {
+    transform: rotate(45deg) translate(0, 0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotate(45deg) translate(8px, 8px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(45deg) translate(0, 0);
+    opacity: 0.8;
+  }
+}
+
+@keyframes scrollBounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
